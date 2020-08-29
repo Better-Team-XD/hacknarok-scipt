@@ -1,9 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import json
-
 from accents import remove_accents
-
 
 URL = 'https://www.przepisy.pl/'
 
@@ -51,6 +49,9 @@ def get_data(category_url, category_name):
         recipe_url = remove_accents(recipe.lower().replace(' ', '-'))
         try:
             ingredients = get_recipe_ingredients(recipe_url)
+            image_url = f'https://s3.przepisy.pl/przepisy3ii/img/variants/800x0/{recipe_url}.jpg'
+            if requests.get(image_url).status_code != 200:
+                raise AttributeError
         except AttributeError:
             error_number += 1
             continue
@@ -58,6 +59,7 @@ def get_data(category_url, category_name):
 
         recipe_list.append({
             "recipe": recipe,
+            "image_url": f'https://s3.przepisy.pl/przepisy3ii/img/variants/800x0/{recipe_url}.jpg',
             "recipe_url": URL + 'przepis/' + recipe_url,
             "ingredients": ingredients
         })
@@ -73,9 +75,7 @@ def get_data(category_url, category_name):
 
 
 if __name__ == "__main__":
-    # print(get_recipe_ingredients('kruche-ciasto-z-budyniowa-pianka-i-owocami-12057'))
-    # print(get_recipe_names('posilek/sniadanie'))
-    data = get_data('posilek/sniadanie', "Śniadanie")
+    data = get_data('posilek/sniadanie?page=2', "Śniadanie")
 
     with open('data.json', 'w') as outfile:
         json.dump(data, outfile, ensure_ascii=False)
