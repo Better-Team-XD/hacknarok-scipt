@@ -1,6 +1,9 @@
 from bs4 import BeautifulSoup
 import requests
+import json
+
 from accents import remove_accents
+
 
 URL = 'https://www.przepisy.pl/'
 
@@ -59,18 +62,20 @@ def get_data(category_url, category_name):
             "ingredients": ingredients
         })
 
-    json = {
+    res = {
         "category": category_name,
         "recipes": recipe_list,
         "errors": error_number,
         "success": success_number
     }
 
-    return json
+    return res
 
 
 if __name__ == "__main__":
     # print(get_recipe_ingredients('kruche-ciasto-z-budyniowa-pianka-i-owocami-12057'))
     # print(get_recipe_names('posilek/sniadanie'))
+    data = get_data('posilek/sniadanie', "Śniadanie")
 
-    print(get_data('posilek/sniadanie', "Śniadanie"))
+    with open('data.json', 'w') as outfile:
+        json.dump(data, outfile, ensure_ascii=False)
