@@ -58,17 +58,16 @@ def get_data(category_url, category_name):
         success_number += 1
 
         recipe_list.append({
-            "recipe": recipe,
-            "image_url": f'https://s3.przepisy.pl/przepisy3ii/img/variants/800x0/{recipe_url}.jpg',
-            "recipe_url": URL + 'przepis/' + recipe_url,
+            "name": recipe,
+            "category": category_name,
+            "url": URL + 'przepis/' + recipe_url,
+            "imgUrl": f'https://s3.przepisy.pl/przepisy3ii/img/variants/800x0/{recipe_url}.jpg',
             "ingredients": ingredients
         })
 
     res = {
         "category": category_name,
         "recipes": recipe_list,
-        "errors": error_number,
-        "success": success_number
     }
 
     return res
@@ -76,6 +75,7 @@ def get_data(category_url, category_name):
 
 if __name__ == "__main__":
     data = get_data('posilek/sniadanie?page=2', "Śniadanie")
-
-    with open('data.json', 'w') as outfile:
-        json.dump(data, outfile, ensure_ascii=False)
+    recipe_list = data["recipes"]
+    for recipe in recipe_list:
+        r = requests.post('http://localhost:8080/api/v1/recipes', json=recipe)
+        print(r)
