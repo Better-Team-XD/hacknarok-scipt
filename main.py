@@ -74,8 +74,8 @@ def get_data(category_url, category_name):
 
 
 if __name__ == "__main__":
-    data = get_data('posilek/sniadanie?page=2', "Śniadanie")
+    data = get_data('posilek/sniadanie?page=3', "Śniadanie")
     recipe_list = data["recipes"]
     for recipe in recipe_list:
-        r = requests.post('http://localhost:8080/api/v1/recipes', json=recipe)
+        r = requests.post('http://35.228.89.132/api/v1/recipes', json=recipe)
         print(r)
